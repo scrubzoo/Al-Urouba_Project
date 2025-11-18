@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Urouba Motors | Ultimate System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- CSS: DESIGN SYSTEM --- */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --accent-blue: #3b82f6;
+            --accent-gold: #fbbf24;
+            --diamond-color: #06b6d4;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --modal-overlay: rgba(0,0,0,0.9);
+            --vip-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        /* LIGHT THEME VARIABLES */
+        body.light-mode {
+            --bg-dark: #f1f5f9;
+            --bg-card: #ffffff;
+            --accent-blue: #2563eb;
+            --accent-gold: #d97706;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --modal-overlay: rgba(255,255,255,0.95);
+            --vip-gradient: linear-gradient(135deg, #bfdbfe 0%, #eff6ff 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); scroll-behavior: smooth; transition: background 0.5s, color 0.5s; }
+
+        /* NEWS TICKER */
+        .news-ticker {
+            background: var(--accent-gold); color: black; font-weight: bold;
+            white-space: nowrap; overflow: hidden; padding: 8px 0; font-size: 0.9rem;
+        }
+        .ticker-content { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        /* HEADER */
+        header {
+            background: var(--bg-card); padding: 1rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--text-muted);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .logo { font-size: 1.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        .logo span { color: var(--accent-blue); }
+        nav ul { list-style: none; display: flex; gap: 20px; align-items: center; }
+        nav a { text-decoration: none; color: var(--text-main); transition: 0.3s; font-weight: 500; }
+        nav a:hover { color: var(--accent-gold); }
+        .theme-btn {
+            background: none; border: 2px solid var(--text-main); color: var(--text-main);
+            padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold;
+        }
+
+        /* HERO */
+        .hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1920&auto=format');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 0 20px; color: white;
+        }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 15px; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .btn-main {
+            padding: 15px 40px; background: var(--accent-blue); color: white; border: none;
+            font-size: 1.1rem; font-weight: bold; border-radius: 50px; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        .btn-main:hover { transform: scale(1.05); background: var(--accent-gold); color: black; }
+
+        /* SECTIONS */
+        .container { max-width: 1300px; margin: 60px auto; padding: 0 20px; }
+        .section-header { text-align: center; margin-bottom: 40px; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 10px; }
+        .line { width: 80px; height: 4px; background: var(--accent-gold); margin: 0 auto; }
+
+        /* SEARCH & COMPARE */
+        .tools-bar { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+        .search-input, .compare-select {
+            padding: 12px 20px; border-radius: 50px; border: 2px solid var(--text-muted);
+            background: var(--bg-card); color: var(--text-main); outline: none; width: 300px;
+        }
+        .btn-action { padding: 12px 25px; background: var(--text-main); color: var(--bg-dark); border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        
+        /* COMPARISON RESULT */
+        #compareResult { margin-bottom: 40px; display: none; }
+        .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 15px; overflow: hidden; }
+        .compare-table th, .compare-table td { padding: 15px; border-bottom: 1px solid var(--text-muted); text-align: center; }
+        .compare-table th { background: var(--accent-blue); color: white; }
+        .winner { color: #10b981; font-weight: bold; }
+
+        /* GRID & CARDS */
+        .car-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .card {
+            background: var(--bg-card); border-radius: 20px; overflow: hidden; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.4s ease; border: 1px solid var(--text-muted);
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent-blue); }
+        .fav-icon {
+            position: absolute; top: 15px; right: 15px; z-index: 10;
+            background: rgba(0,0,0,0.6); padding: 10px; border-radius: 50%; color: white;
+            cursor: pointer; transition: 0.3s;
+        }
+        .fav-icon.active { background: white; color: red; }
+        .card-img { width: 100%; height: 200px; object-fit: cover; transition: 0.5s; }
+        .card:hover .card-img { transform: scale(1.1); }
+        .card-content { padding: 20px; }
+        .card-title { font-size: 1.4rem; margin-bottom: 5px; }
+        .card-price { color: var(--accent-gold); font-size: 1.3rem; font-weight: bold; display: block; margin-bottom: 15px; }
+        .btn-details {
+            width: 100%; padding: 10px; background: transparent; border: 2px solid var(--accent-blue);
+            color: var(--accent-blue); border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .btn-details:hover { background: var(--accent-blue); color: white; }
+
+        /* MEMBERSHIP SECTION */
+        .loyalty-dashboard {
+            background: var(--bg-card); padding: 30px; border-radius: 20px;
+            border: 1px solid var(--text-muted); margin-bottom: 50px; display: flex;
+            justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+        }
+        .user-status { display: flex; align-items: center; gap: 20px; }
+        .status-icon { 
+            width: 80px; height: 80px; border-radius: 50%; background: #334155; 
+            display: flex; justify-content: center; align-items: center; font-size: 2rem; color: white;
+            border: 3px solid #475569; transition: 0.5s;
+        }
+        .status-icon.gold { background: rgba(251, 191, 36, 0.2); color: var(--accent-gold); border-color: var(--accent-gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
+        .status-icon.diamond { background: rgba(6, 182, 212, 0.2); color: var(--diamond-color); border-color: var(--diamond-color); box-shadow: 0 0 25px var(--diamond-color); }
+        .status-text h3 { font-size: 1.5rem; margin-bottom: 5px; }
+        .status-text p { color: var(--text-muted); }
+        .progress-box { text-align: right; }
+        .progress-count { font-size: 2.5rem; font-weight: bold; color: var(--accent-blue); }
+
+        .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .tier-card {
+            background: var(--bg-card); padding: 40px; border-radius: 20px; text-align: center;
+            border: 1px solid var(--text-muted); position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .tier-card:hover { transform: translateY(-5px); }
+        .tier-card i { font-size: 3rem; margin-bottom: 20px; color: #64748b; }
+        .tier-card h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .tier-card ul { list-style: none; margin-top: 20px; text-align: left; padding-left: 10px; }
+        .tier-card li { margin-bottom: 10px; color: var(--text-muted); }
+        .tier-card li i { font-size: 1rem; margin-right: 10px; color: var(--accent-blue); width: auto; display: inline; }
+        .tier-card.gold-tier { border-color: var(--accent-gold); }
+        .tier-card.gold-tier i.main-icon { color: var(--accent-gold); }
+        .tier-card.diamond-tier { border-color: var(--diamond-color); }
+        .tier-card.diamond-tier i.main-icon { color: var(--diamond-color); }
+
+        /* TRADE-IN & REVIEWS */
+        .trade-section {
+            background: var(--bg-card); padding: 40px; border-radius: 20px; border: 1px solid var(--text-muted);
+            display: flex; gap: 40px; flex-wrap: wrap; align-items: center;
+        }
+        .trade-form { flex: 1; min-width: 300px; }
+        .trade-result { flex: 1; text-align: center; font-size: 1.5rem; color: var(--accent-gold); font-weight: bold; }
+
+        .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .review-card { background: var(--bg-card); padding: 20px; border-radius: 15px; border: 1px solid var(--text-muted); }
+        .stars { color: var(--accent-gold); margin-bottom: 10px; }
+
+        /* LIVE CHAT */
+        .chat-btn {
+            position: fixed; bottom: 30px; right: 30px; background: var(--accent-blue); color: white;
+            width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; cursor: pointer; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5); z-index: 999;
+        }
+        .chat-window {
+            position: fixed; bottom: 100px; right: 30px; width: 320px; height: 400px;
+            background: var(--bg-card); border-radius: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            display: none; flex-direction: column; overflow: hidden; z-index: 999; border: 1px solid var(--accent-blue);
+        }
+        .chat-header { background: var(--accent-blue); padding: 15px; color: white; font-weight: bold; }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.9rem; }
+        .chat-msg { margin-bottom: 10px; padding: 10px; border-radius: 10px; max-width: 85%; line-height: 1.4; }
+        .msg-agent { background: var(--bg-dark); border: 1px solid var(--text-muted); float: left; clear: both; }
+        .msg-user { background: var(--accent-gold); color: black; float: right; clear: both; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-overlay); z-index: 1000; display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--bg-card); width: 90%; max-width: 1000px; height: 90vh;
+            border-radius: 20px; overflow-y: auto; display: flex; flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid var(--accent-blue);
+        }
+        @media(min-width: 768px) { .modal-content { flex-direction: row; overflow: hidden; } }
+        
+        .modal-img-box { flex: 1; background: #000; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .modal-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        
+        .modal-info-box { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; cursor: pointer; background: none; border: none; color: var(--text-muted); }
+
+        /* FEATURES INSIDE POPUP */
+        .feature-box { margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 10px; border: 1px solid var(--text-muted); }
+        .color-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; display: inline-block; margin-right: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .finance-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .slider { width: 100%; margin: 10px 0; }
+
+        /* TEST DRIVE STYLES */
+        .test-drive-form { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .test-drive-form input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid var(--text-muted); background: var(--bg-dark); color: var(--text-main); }
+        .td-result { margin-top: 10px; font-weight: bold; min-height: 25px; font-size: 1.1rem; }
+
+        /* BUTTONS */
+        .btn-test-drive { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid var(--text-main); background: transparent; color: var(--text-main); cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+        .btn-test-drive:hover { background: var(--text-main); color: var(--bg-dark); }
+        
+        .btn-buy { width: 100%; padding: 15px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        .btn-buy:hover { background: #059669; }
+
+        /* VIP ROOM */
+        .vip-section { background: var(--vip-gradient); padding: 50px; border-radius: 20px; color: var(--text-main); margin-top: 50px; display: flex; flex-wrap: wrap; gap: 40px; }
+        .vip-form { flex: 1; background: rgba(0,0,0,0.2); padding: 30px; border-radius: 20px; }
+        
+        footer { text-align: center; padding: 40px; border-top: 1px solid var(--text-muted); margin-top: 50px; background: var(--bg-dark); }
+
+    </style>
+</head>
+<body>
+
+    <div class="news-ticker">
+        <div class="ticker-content">
+            🔥 BREAKING: New Lamborghini Urus Shipment Arriving Soon! | 💎 Gold Members get 50% off Shipping Fees | ⚡ Tesla Model S Plaid now in Stock | 💰 Trade-in values are at an all-time high!
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">Al-Urouba <span>Motors</span></div>
+        <nav>
+            <ul>
+                <li><a href="#inventory">Inventory</a></li>
+                <li><a href="#loyalty">Membership</a></li>
+                <li><a href="#tradein">Trade-In</a></li>
+                <li><a href="#vip">VIP Room</a></li>
+            </ul>
+            <button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-adjust"></i> Theme</button>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Drive Your <span>Dream</span></h1>
+        <p>The Ultimate Luxury Car Experience. Now with AI Pricing & Instant Approvals.</p>
+        <button class="btn-main" onclick="document.getElementById('inventory').scrollIntoView()">View Showroom</button>
+    </section>
+
+    <section class="container" id="compare">
+        <div class="section-header"><h2>Find & Compare</h2><div class="line"></div></div>
+        <div class="tools-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search (e.g. Ferrari, SUV)..." onkeyup="filterCars()">
+            <select id="car1" class="compare-select"><option value="">Select Car 1</option></select>
+            <select id="car2" class="compare-select"><option value="">Select Car 2</option></select>
+            <button class="btn-action" onclick="compareCars()">Compare Now</button>
+        </div>
+        <div id="compareResult"></div>
+    </section>
+
+    <section class="container" id="inventory">
+        <div class="car-grid" id="carGrid">
+            </div>
+    </section>
+
+    <section class="container" id="loyalty">
+        <div class="section-header"><h2>Elite Loyalty Program</h2><div class="line"></div></div>
+        <div class="loyalty-dashboard">
+            <div class="user-status">
+                <div class="status-icon" id="statusIcon"><i class="fas fa-user"></i></div>
+                <div class="status-text">
+                    <h3 id="statusLabel">Standard Member</h3>
+                    <p id="statusMsg">Purchase more cars to unlock Gold status.</p>
+                </div>
+            </div>
+            <div class="progress-box">
+                <p style="color: var(--text-muted);">Cars Purchased</p>
+                <div class="progress-count" id="purchaseCountDisplay">0</div>
+            </div>
+        </div>
+        <div class="tier-grid">
+            <div class="tier-card">
+                <i class="fas fa-user-shield"></i>
+                <h3>Standard</h3>
+                <p>Entry Level</p>
+                <ul><li><i class="fas fa-check"></i> Showroom Access</li><li><i class="fas fa-check"></i> Standard Support</li></ul>
+            </div>
+            <div class="tier-card gold-tier">
+                <i class="fas fa-crown main-icon"></i>
+                <h3>Gold Member</h3>
+                <p>Buy 3+ Cars</p>
+                <ul><li><i class="fas fa-check"></i> <strong>5% Discount</strong></li><li><i class="fas fa-check"></i> Priority Booking</li></ul>
+            </div>
+            <div class="tier-card diamond-tier">
+                <i class="fas fa-gem main-icon"></i>
+                <h3>Diamond VIP</h3>
+                <p>Buy 5+ Cars</p>
+                <ul><li><i class="fas fa-check"></i> <strong>10% Discount</strong></li><li><i class="fas fa-check"></i> Private Concierge</li></ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" id="tradein">
+        <div class="section-header"><h2>Sell Your Car</h2><div class="line"></div></div>
+        <div class="trade-section">
+            <div style="flex: 1;">
+                <h3>Instant Cash Offer</h3>
+                <p>Enter your current vehicle details to get an AI-generated estimate.</p>
+            </div>
+            <div class="trade-form">
+                <input type="text" class="search-input" placeholder="Car Model" style="width: 100%; margin-bottom: 10px;">
+                <input type="number" class="search-input" placeholder="Mileage (km)" style="width: 100%; margin-bottom: 10px;">
+                <button class="btn-main" style="width: 100%;" onclick="calculateTradeIn()">Get Offer</button>
+                <div id="tradeResult" class="trade-result" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="section-header"><h2>Client Reviews</h2><div class="line"></div></div>
+        <div class="review-grid">
+            <div class="review-card"><div class="stars">★★★★★</div><p>"The delivery date calculator was spot on!"</p><small>- Ahmed K.</small></div>
+            <div class="review-card"><div class="stars">★★★★★</div><p>"Membership rewards are real. I saved $10k."</p><small>- Sarah M.</small></div>
+            <div class="review-card"><div class="stars">★★★★★</div><p>"Test drive booking is so easy and fast."</p><small>- Omar J.</small></div>
+        </div>
+    </section>
+
+    <section class="container" id="vip">
+        <div class="vip-section">
+            <div style="flex:1">
+                <h2><i class="fas fa-crown"></i> VIP Import Room</h2>
+                <p>Order any car globally. We handle customs & shipping.</p>
+            </div>
+            <div class="vip-form">
+                <input type="text" id="vipName" class="search-input" placeholder="Car Name" style="width:100%; margin-bottom:10px;">
+                <input type="number" id="vipPrice" class="search-input" placeholder="Est. Price ($)" style="width:100%; margin-bottom:10px;">
+                <button class="btn-main" style="width:100%; background:white; color:black;" onclick="calculateVip()">Request Import</button>
+                <p id="vipOutput" style="margin-top:15px; font-weight:bold; color: var(--accent-gold);"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact"><p>&copy; 2024 Al-Urouba Motors. All rights reserved.</p></footer>
+
+    <div class="chat-btn" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">VIP Support Agent</div>
+        <div class="chat-body" id="chatBody"><div class="chat-msg msg-agent">Hello! How can I help you today?</div></div>
+        <div style="padding: 10px; display:flex;">
+            <input type="text" id="chatInput" placeholder="Type a message..." style="flex:1; padding:5px; border-radius:5px; border:none;">
+            <button onclick="sendMessage()" style="padding:5px 10px; margin-left:5px; border-radius:5px; border:none; cursor:pointer;">Send</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-img-box"><img src="" id="mImg" class="modal-img"></div>
+            <div class="modal-info-box">
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+                <h2 id="mTitle" class="modal-title">Car Name</h2>
+                <span id="mPrice" class="modal-price">$000,000</span>
+                <p id="mDesc" style="color: var(--text-muted); margin-bottom: 20px;">Desc</p>
+
+                <div class="feature-box">
+                    <h4><i class="fas fa-palette"></i> Paint Studio</h4>
+                    <span class="color-btn" style="background:red;" onclick="changeColor('0deg')"></span>
+                    <span class="color-btn" style="background:blue;" onclick="changeColor('200deg')"></span>
+                    <span class="color-btn" style="background:black;" onclick="changeColor('grayscale(100%)')"></span>
+                    <span class="color-btn" style="background:gold;" onclick="changeColor('45deg')"></span>
+                </div>
+
+                <div class="feature-box">
+                    <h4><i class="fas fa-calculator"></i> Finance</h4>
+                    <div class="finance-row"><span>Down Payment: <span id="dpVal">20%</span></span><input type="range" class="slider" min="0" max="80" value="20" oninput="calcFinance()" id="dpSlide"></div>
+                    <div class="finance-row"><span>Term: <span id="termVal">60 Mo</span></span><input type="range" class="slider" min="12" max="84" value="60" oninput="calcFinance()" id="termSlide"></div>
+                    <h3 id="monthlyPay" style="color: var(--accent-blue); text-align: center;">$0 / mo</h3>
+                </div>
+
+                <div class="feature-box" style="border-color: var(--accent-gold);">
+                    <h4><i class="fas fa-calendar-check"></i> Schedule Test Drive</h4>
+                    <div class="test-drive-form">
+                        <input type="date" id="tdDate">
+                        <input type="time" id="tdTime">
+                    </div>
+                    <button class="btn-test-drive" onclick="checkTestDrive()">Request Booking</button>
+                    <div id="tdResult" class="td-result"></div>
+                </div>
+
+                <button class="btn-buy" onclick="buyCar()">Confirm Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+
+        // 1. DATA
+        const cars = [
+            { id: 1, name: "Porsche 911 GT3", price: 223000, hp: 518, speed: 3.0, img: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=800&auto=format&fit=crop", desc: "Track precision tool." },
+            { id: 2, name: "Lamborghini Urus", price: 230000, hp: 657, speed: 3.1, img: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=800&auto=format&fit=crop", desc: "Super SUV performance." },
+            { id: 3, name: "Mercedes G63", price: 179000, hp: 577, speed: 4.5, img: "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=800&auto=format&fit=crop", desc: "Off-road legend." },
+            { id: 4, name: "Tesla Plaid", price: 109000, hp: 1020, speed: 1.9, img: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=800&auto=format&fit=crop", desc: "Electric speed king." },
+            { id: 5, name: "Rolls Ghost", price: 340000, hp: 563, speed: 4.6, img: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?q=80&w=800&auto=format&fit=crop", desc: "Ultimate luxury." },
+            { id: 6, name: "Ferrari F8", price: 280000, hp: 710, speed: 2.9, img: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=800&auto=format&fit=crop", desc: "Italian masterpiece." }
+        ];
+        const fallback = "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=800";
+        let currentCar = null;
+        let purchasedCars = 0; 
+
+        // 2. INIT
+        function init() {
+            const grid = document.getElementById('carGrid');
+            const select1 = document.getElementById('car1');
+            const select2 = document.getElementById('car2');
+            grid.innerHTML = "";
+            cars.forEach(car => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <div class="fav-icon" onclick="this.classList.toggle('active')"><i class="fas fa-heart"></i></div>
+                    <img src="${car.img}" class="card-img" onerror="this.src='${fallback}'">
+                    <div class="card-content"><h3 class="card-title">${car.name}</h3><span class="card-price">$${car.price.toLocaleString()}</span><button class="btn-details" onclick="openModal(${car.id})">View Details</button></div>
+                `;
+                grid.appendChild(div);
+                const opt1 = new Option(car.name, car.id);
+                const opt2 = new Option(car.name, car.id);
+                select1.add(opt1); select2.add(opt2);
+            });
+        }
+        init();
+
+        // 3. THEME & SEARCH
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+        function filterCars() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.display = card.querySelector('.card-title').innerText.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        }
+
+        // 4. COMPARISON
+        function compareCars() {
+            const id1 = parseInt(document.getElementById('car1').value);
+            const id2 = parseInt(document.getElementById('car2').value);
+            const res = document.getElementById('compareResult');
+            if(!id1 || !id2) return;
+            const c1 = cars.find(c => c.id === id1);
+            const c2 = cars.find(c => c.id === id2);
+            res.style.display = 'block';
+            res.innerHTML = `<table class="compare-table"><tr><th>Feature</th><th>${c1.name}</th><th>${c2.name}</th></tr><tr><td>Price</td><td class="${c1.price<c2.price?'winner':''}">${c1.price}</td><td class="${c2.price<c1.price?'winner':''}">${c2.price}</td></tr><tr><td>HP</td><td class="${c1.hp>c2.hp?'winner':''}">${c1.hp}</td><td class="${c2.hp>c1.hp?'winner':''}">${c2.hp}</td></tr></table>`;
+        }
+
+        // 5. TRADE-IN
+        function calculateTradeIn() {
+            document.getElementById('tradeResult').innerHTML = `Estimated Offer: $${Math.floor(Math.random()*(30000-5000)+5000).toLocaleString()}`;
+        }
+
+        // 6. MODAL FUNCTIONS
+        function openModal(id) {
+            currentCar = cars.find(c => c.id === id);
+            document.getElementById('mImg').src = currentCar.img;
+            document.getElementById('mImg').style.filter = "none";
+            document.getElementById('mTitle').innerText = currentCar.name;
+            document.getElementById('mPrice').innerText = "$" + currentCar.price.toLocaleString();
+            document.getElementById('mDesc').innerText = currentCar.desc;
+            document.getElementById('tdResult').innerHTML = ""; 
+            document.getElementById('modalOverlay').classList.add('active');
+            calcFinance();
+        }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        function changeColor(v) { 
+            const img = document.getElementById('mImg');
+            v.includes('deg') ? img.style.filter = `hue-rotate(${v})` : img.style.filter = v; 
+        }
+        function calcFinance() {
+            const dp = document.getElementById('dpSlide').value;
+            const term = document.getElementById('termSlide').value;
+            document.getElementById('dpVal').innerText = dp + "%"; document.getElementById('termVal').innerText = term + " Mo";
+            const monthly = (currentCar.price * ((100-dp)/100) / term) * 1.05;
+            document.getElementById('monthlyPay').innerText = "$" + Math.floor(monthly).toLocaleString() + " / mo";
+        }
+
+        // 7. SMART TEST DRIVE LOGIC (Approve / No Approve)
+        function checkTestDrive() {
+            const date = document.getElementById('tdDate').value;
+            const time = document.getElementById('tdTime').value;
+            const res = document.getElementById('tdResult');
+
+            if(!date || !time) {
+                res.innerHTML = "<span style='color:orange'>Please select date & time first.</span>";
+                return;
+            }
+            res.innerHTML = "<span style='color:var(--text-muted)'>Checking system availability... <i class='fas fa-spinner fa-spin'></i></span>";
+            setTimeout(() => {
+                const isApproved = Math.random() > 0.3; 
+                if(isApproved) {
+                    res.innerHTML = `<span style='color:#10b981'>✅ APPROVED! Booking confirmed for ${date} at ${time}.</span>`;
+                } else {
+                    res.innerHTML = `<span style='color:#ef4444'>❌ NOT APPROVED. Time slot is fully booked.</span>`;
+                }
+            }, 1500);
+        }
+
+        // 8. BUY LOGIC (Delivery Time + Membership)
+        function buyCar() {
+            closeModal();
+            const days = Math.floor(Math.random() * 20) + 5; 
+            const date = new Date(); date.setDate(date.getDate() + days);
+            alert(`🎉 CONGRATULATIONS!\n\nYou purchased: ${currentCar.name}\n\n⏱️ Wait Time: ${days} Days\n📅 Delivery Date: ${date.toDateString()}\n\nYour Membership status has been updated!`);
+            purchasedCars++;
+            updateLoyaltyUI();
+        }
+
+        function updateLoyaltyUI() {
+            const count = document.getElementById('purchaseCountDisplay');
+            const icon = document.getElementById('statusIcon');
+            const label = document.getElementById('statusLabel');
+            const msg = document.getElementById('statusMsg');
+            count.innerText = purchasedCars;
+            icon.className = 'status-icon';
+            if (purchasedCars >= 5) {
+                icon.classList.add('diamond'); icon.innerHTML = '<i class="fas fa-gem"></i>';
+                label.innerText = "Diamond VIP"; label.style.color = "var(--diamond-color)";
+                msg.innerText = "Elite Status. 10% Discount applied.";
+            } else if (purchasedCars >= 3) {
+                icon.classList.add('gold'); icon.innerHTML = '<i class="fas fa-crown"></i>';
+                label.innerText = "Gold Member"; label.style.color = "var(--accent-gold)";
+                msg.innerText = "Premium Status. 5% Discount applied.";
+            } else {
+                icon.innerHTML = '<i class="fas fa-user"></i>';
+                label.innerText = "Standard Member"; label.style.color = "white";
+                msg.innerText = `Buy ${3 - purchasedCars} more cars for Gold.`;
+            }
+            document.getElementById('loyalty').scrollIntoView();
+        }
+
+        // 9. VIP
+        function calculateVip() { alert("Request Sent to Agent. Delivery Estimate: 45 Days."); }
+        
+        // 10. SMART CHATBOT (FIXED BUG)
+        function toggleChat() { const w = document.getElementById('chatWindow'); w.style.display = w.style.display === 'flex' ? 'none' : 'flex'; }
+        
+        function getBotResponse(input) {
+            input = input.toLowerCase();
+            
+            // Priority Checks (Specific words first)
+            if(input.includes("price") || input.includes("cost") || input.includes("money")) 
+                return "Our prices are listed in the Inventory. We also offer financing!";
+            
+            if(input.includes("test") || input.includes("drive") || input.includes("booking")) 
+                return "You can book a test drive by clicking 'View Details' on any car.";
+            
+            if(input.includes("location") || input.includes("where") || input.includes("address")) 
+                return "We are located on Al-Urouba Street, Amman.";
+            
+            if(input.includes("buy") || input.includes("purchase"))
+                return "Great! Click 'View Details' on your dream car and select 'Confirm Purchase'.";
+                
+            // General Questions
+            if(input.includes("ask") || input.includes("question") || input.includes("something") || input.includes("car") || input.includes("inventory"))
+                return "We have the finest collection of cars. Check the Inventory section above!";
+
+            // Greetings (LAST PRIORITY to avoid the 'something' bug)
+            if(input.includes("hello") || input.includes("hi ") || input === "hi" || input.includes("hey")) 
+                return "Welcome to Al-Urouba Motors! How can I help?";
+
+            // Fallback
+            return "I didn't catch that. Try asking about 'Prices', 'Test Drive', or 'Inventory'.";
+        }
+
+        function sendMessage() {
+            const i = document.getElementById('chatInput'); const b = document.getElementById('chatBody');
+            if(!i.value) return;
+            b.innerHTML += `<div class='chat-msg msg-user'>${i.value}</div>`;
+            const reply = getBotResponse(i.value);
+            i.value = ""; 
+            setTimeout(() => { b.innerHTML += `<div class='chat-msg msg-agent'>${reply}</div>`; b.scrollTop = b.scrollHeight; }, 600);
+        }
+
+    </script>
+</body>
+</html>
